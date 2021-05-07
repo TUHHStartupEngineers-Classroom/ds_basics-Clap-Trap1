@@ -157,6 +157,5 @@ Microsoft Company had the most patents granted in August 2014.
     ungroup() %>%
     arrange(desc(total_patents_wordwide)) %>% slice(1:10)  
 top10_worlwid_top5_upts_ <- organization_data %>% slice(1:5)  
-  top10_worlwid_top5_upts_  
 ```
   

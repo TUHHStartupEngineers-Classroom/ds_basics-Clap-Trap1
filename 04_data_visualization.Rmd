@@ -15,7 +15,8 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(message=FALSE,warning=FALSE, cache=TRUE)
 ```
-
+# Challenge 4.1
+This is the first part of the challenge where we plot the cumulative covid cases by country :  
 
 ```{r}
 library(ggplot2)
@@ -30,7 +31,7 @@ covid_data_tbl <- read_csv("https://covid.ourworldindata.org/data/owid-covid-dat
 # 2. Data manipluation
 
 covid_cases_tbl <- covid_data_tbl %>%
-  filter(location %in% c("Germany",
+filter(location %in% c("Germany",
                          "United Kingdom",
                          "France",
                          "Spain",
@@ -55,36 +56,56 @@ covid_cases_tbl %>%
   )
 ```
 
+# Challenge 4.2
+A plot of the mortality rate of covid worldwide
 ```{r}
-library(ggmap)
+library(ggrepel)
+library(RColorBrewer)
 library(maps)
-library(ggplot2)
 library(tidyverse)
 library(lubridate)
-library(dplyr)
-library(magrittr)
-library(ggplot2)
 
+#read the data
 covid_data_tbl <- read_csv("https://covid.ourworldindata.org/data/owid-covid-data.csv")
+world <- map_data ("world")
 
-world_map <- map_data("world") %>%
-  select(region, long, lat, group) %>%
-  rename(location = region)
+world[is.na(world)] <- 0  # set NA values to 0
+# filter only needed data
+covid_data <- covid_data_tbl %>% select(total_deaths, date, location, population)
+#calculation of mortality rate
+covid_data$mortality_rate = (covid_data_tbl$total_deaths/covid_data_tbl$population)*100 
+covid_data[is.na(covid_data)] <- 0 # set NA values to 0
+#choose the actual date, filter the data not needed anymore
+covid_now<- covid_data %>% filter(date == Sys.Date()-1) %>%
+  select(-population, -total_deaths, -date)%>% 
+  rename(region = location)
+covid_now[is.na(covid_now)] <- 0 #set NA values to 0
+#change the names of the US, UK, and Congo regions    
+   world$region[world$region == "UK"] <- "United Kingdom" 
+   world$region[world$region == "US"] <- "United Stated" 
+   world$region[world$region == "Democratic Republic of the Congo"] <- "Democratic Republic of Congo" 
 
-covid_world_tbl <- covid_data_tbl %>%
-  #mutate(mortalityrate=total_deaths_per_million/1000000) %>%
-  select(date, location, total_deaths_per_million) %>%
-  rename(region=location)%>%
-  right_join(world_map)
-  #%>%
-  #group_by(region)
-
- covid_world_tbl%>% ggplot() +
-  geom_map(aes(map_id = region, x=long, y=lat, fill = mortalityrate,color= "red"  ), map = world,colour= "white",size = 0.10)+
-   scale_fill_continuous(low = "red",
-                        high = "black",
-                        na.value = "grey50",
-                        guide="colorbar") +
-  labs(title = "Confirmed COVID 19 deaths realtive to size of population",
-      subtitle = "around 3million confirmed COVID 19 deaths worldwide",fill = "Mortality rate", x="", y="")
+#combine the data to the map      
+map_data <- merge(x = world, y = covid_now, 
+                             by    = "region", 
+                             all.x = TRUE, 
+                             all.y = FALSE) %>%
+                 arrange(order)
+map_data[is.na(map_data)] <- 0
+#plot the worldmap
+ggplot(map_data,aes(fill = mortality_rate)) + 
+         geom_map(map=map_data, 
+         aes(long, lat, map_id=region), 
+         col="red")+
+         expand_limits(x = world$long, y = world$lat) + 
+         theme( axis.text.x=element_blank(),
+                axis.text.y=element_blank()) +
+labs(
+  title = ("Mortality rate of COVID-19 Worldwide"),
+  caption = Sys.Date(),
+  x = "",
+  y = "",
+  fill = "Mortality Rate") +
+  scale_fill_continuous(limits=c(0,0.255), breaks=c(0.05, 0.1, 0.15,0.2,0.25),
+                        labels = c("0.050%", "0.100%", "0.150%","0.200%","0.250%"))
 ```
