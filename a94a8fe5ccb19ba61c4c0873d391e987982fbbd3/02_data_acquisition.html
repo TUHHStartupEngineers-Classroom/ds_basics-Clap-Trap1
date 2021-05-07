@@ -379,6 +379,9 @@ div.tocify {
 </div>
 
 
+<div id="challenge-2.1" class="section level1">
+<h1><span class="header-section-number">1</span> Challenge 2.1</h1>
+<p>I found a free weather API online. It comes with some instructions on it’s use, which is nice ! The code shows the 7-day weather forecast in Hamburg.</p>
 <pre class="r"><code>library(jsonlite)
 library(glue)
 library(RSQLite)
@@ -394,6 +397,7 @@ library(stringr)
 library(ggplot2)  
 
 #shows the 7 days weather forecast in hamburg
+#the longitude and lattitude can be typed into the URL directly: 
 
 resp &lt;- GET(&quot;http://www.7timer.info/bin/api.pl?lon=53.55&amp;lat=9.99&amp;product=civillight&amp;output=json&quot;)
 
@@ -409,6 +413,11 @@ forecast</code></pre>
 {"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["date"],"name":[1],"type":["int"],"align":["right"]},{"label":["weather"],"name":[2],"type":["chr"],"align":["left"]},{"label":["temp2m"],"name":[3],"type":["df[,2]"],"align":["right"]},{"label":["wind10m_max"],"name":[4],"type":["int"],"align":["right"]}],"data":[{"1":"20210507","2":"cloudy","3":"<df[,2] [7 × 2]>","4":"2","_rn_":"1"},{"1":"20210508","2":"cloudy","3":"<df[,2] [7 × 2]>","4":"2","_rn_":"2"},{"1":"20210509","2":"cloudy","3":"<df[,2] [7 × 2]>","4":"2","_rn_":"3"},{"1":"20210510","2":"ts","3":"<df[,2] [7 × 2]>","4":"2","_rn_":"4"},{"1":"20210511","2":"lightrain","3":"<df[,2] [7 × 2]>","4":"3","_rn_":"5"},{"1":"20210512","2":"ts","3":"<df[,2] [7 × 2]>","4":"4","_rn_":"6"},{"1":"20210513","2":"ts","3":"<df[,2] [7 × 2]>","4":"5","_rn_":"7"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
+<p>When locally compiling, the ‘temp2m’ shows the temperature in correct numbers. I don’t know why it doesn’t show it correctly when building the website !</p>
+</div>
+<div id="challenge-2.2" class="section level1">
+<h1><span class="header-section-number">2</span> Challenge 2.2</h1>
+<p>The code extracts the bikes and corresponding prices of a single category (MTB’s are chosen here, other categories can be selected by typing in the correct url) from the rosebikes shop.</p>
 <pre class="r"><code> # WEBSCRAPING ----
 
 # 1.0 LIBRARIES ----
@@ -422,6 +431,7 @@ library(stringi)   # character string/text processing
 library(strex)
 library(tibble)
 
+#getting the url and bike names :
             url  &lt;- &quot;https://www.rosebikes.de/fahrr%C3%A4der/mtb&quot;
                       html &lt;- url %&gt;% 
                         read_html()
@@ -429,6 +439,7 @@ library(tibble)
                       html_nodes(&quot;.catalog-category-bikes__title-text&quot;) %&gt;% 
                         html_text() %&gt;% 
             gsub(pattern = &#39;\\t|\\r|\\n&#39;, replacement = &#39;&#39;)
+#getting price data, heavy manipulation of the strings to get correct numbers :            
             price &lt;- html  %&gt;% 
               html_nodes(&quot;.catalog-category-bikes__price-title&quot;) %&gt;% 
               html_text() %&gt;% 
@@ -439,8 +450,6 @@ library(tibble)
               stringr::str_replace_all(pattern = &quot;ab &quot;,replacement = &quot;&quot;)  %&gt;% 
               stringr::str_replace_all(pattern = &quot;€&quot;,replacement = &quot;&quot;) %&gt;%
               stringr::str_replace_all(pattern = &quot;[[:space:]]&quot;,replacement = &quot;&quot;) %&gt;%
-              # Extract numbers
-              #stringr::str_remove(pattern = &quot;[a-z]+&quot;)
               as.numeric()
           bike_tbl &lt;- tibble(name,price)  
           bike_tbl</code></pre>
@@ -448,6 +457,23 @@ library(tibble)
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":["name"],"name":[1],"type":["chr"],"align":["left"]},{"label":["price"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"COUNT SOLO","2":"769"},{"1":"PSYCHO PATH","2":"1999"},{"1":"THRILL HILL","2":"2749"},{"1":"GROUND CONTROL","2":"1899"},{"1":"ROOT MILLER","2":"2199"},{"1":"SOUL FIRE","2":"2349"},{"1":"THE BRUCE","2":"979"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
+</div>
+<p>Here is an extra plot of the bikes and the corresponding Prices:</p>
+<pre class="r"><code>  bike_tbl %&gt;%
+  ggplot(aes(x =name, y = price)) +
+  geom_col(fill = &quot;#2DC6D6&quot;) + 
+  geom_label(aes(label = price)) + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))+
+  scale_y_continuous(labels = scales::dollar_format(big.mark = &quot;.&quot;, 
+                                                    decimal.mark = &quot;,&quot;, 
+                                                    prefix = &quot;&quot;, 
+                                                    suffix = &quot; €&quot;)) +
+  labs(
+    title    = &quot;Rosenbike MTB&#39;s&quot;,
+    x = &quot;Bike Model&quot;, # Override defaults for x and y
+    y = &quot;Price&quot;
+  )</code></pre>
+<p><img src="02_data_acquisition_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 </div>
 
 

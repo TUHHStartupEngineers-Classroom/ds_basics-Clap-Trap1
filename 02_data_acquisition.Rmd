@@ -16,6 +16,11 @@ output:
 knitr::opts_chunk$set(message=FALSE,warning=FALSE, cache=TRUE)
 ```
 
+# Challenge 2.1
+
+I found a free weather API online.
+It comes with some instructions on it's use, which is nice !
+The code shows the 7-day weather forecast in Hamburg.
 
 ```{r}
 library(jsonlite)
@@ -33,6 +38,7 @@ library(stringr)
 library(ggplot2)  
 
 #shows the 7 days weather forecast in hamburg
+#the longitude and lattitude can be typed into the URL directly: 
 
 resp <- GET("http://www.7timer.info/bin/api.pl?lon=53.55&lat=9.99&product=civillight&output=json")
 
@@ -44,6 +50,12 @@ weather_data<- resp %>%
 forecast <- weather_data[[3]]
 forecast
 ```
+
+When locally compiling, the 'temp2m' shows the temperature in correct numbers. I don't know why it doesn't show it correctly when building the website !
+
+# Challenge 2.2
+
+The code extracts the bikes and corresponding prices of a single category (MTB's are chosen here, other categories can be selected by typing in the correct url) from the rosebikes shop.
 
 ```{r}
  # WEBSCRAPING ----
@@ -59,6 +71,7 @@ library(stringi)   # character string/text processing
 library(strex)
 library(tibble)
 
+#getting the url and bike names :
             url  <- "https://www.rosebikes.de/fahrr%C3%A4der/mtb"
                       html <- url %>% 
                         read_html()
@@ -66,6 +79,7 @@ library(tibble)
                       html_nodes(".catalog-category-bikes__title-text") %>% 
                         html_text() %>% 
             gsub(pattern = '\\t|\\r|\\n', replacement = '')
+#getting price data, heavy manipulation of the strings to get correct numbers :            
             price <- html  %>% 
               html_nodes(".catalog-category-bikes__price-title") %>% 
               html_text() %>% 
@@ -76,10 +90,29 @@ library(tibble)
               stringr::str_replace_all(pattern = "ab ",replacement = "")  %>% 
               stringr::str_replace_all(pattern = "€",replacement = "") %>%
               stringr::str_replace_all(pattern = "[[:space:]]",replacement = "") %>%
-              # Extract numbers
-              #stringr::str_remove(pattern = "[a-z]+")
               as.numeric()
           bike_tbl <- tibble(name,price)  
           bike_tbl
+          
+         
+```
+
+Here is an extra plot of the bikes and the corresponding Prices:
+
+```{r}
+  bike_tbl %>%
+  ggplot(aes(x =name, y = price)) +
+  geom_col(fill = "#2DC6D6") + 
+  geom_label(aes(label = price)) + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))+
+  scale_y_continuous(labels = scales::dollar_format(big.mark = ".", 
+                                                    decimal.mark = ",", 
+                                                    prefix = "", 
+                                                    suffix = " €")) +
+  labs(
+    title    = "Rosenbike MTB's",
+    x = "Bike Model", # Override defaults for x and y
+    y = "Price"
+  )
 ```            
          

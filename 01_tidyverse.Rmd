@@ -16,10 +16,14 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(message=FALSE,warning=FALSE, cache=TRUE)
 ```
+
+# Challenge 1.1
+
+First part of the code, loading the libraries and reading the files, here is a glimpse of the resulting tables :
 ```{r}
 # Data Science at TUHH ------------------------------------------------------
 # SALES ANALYSIS ----
-#challenge 1.1
+# Challenge 1.1
 
 # 1.0 Load libraries ----
 library(tidyverse)
@@ -41,11 +45,16 @@ bikeshops_tbl <- read_excel("/home/icareyus/R_datascience/ds_basics-Clap-Trap1/0
 
 # 3.0 Examining Data  ----
 glimpse(orderlines_tbl)
+
+```
+The second part is the data wrangling part, to get the data ready for plotting, then the part with the data visualization. Here is the final plot:
+
+```{r}
 # 4.0 Joining Data ----
 bike_orderlines_joined_tbl <- orderlines_tbl %>%
   left_join(bikes_tbl, by = c("product.id" = "bike.id")) %>%
   left_join(bikeshops_tbl, by = c("customer.id" = "bikeshop.id"))
-bike_orderlines_joined_tbl %>% glimpse()
+
 # 5.0 Wrangling Data ----
 bike_orderlines_wrangled_tbl <- bike_orderlines_joined_tbl %>%
   # 5.1 Separate category name
@@ -105,15 +114,46 @@ sales_by_state_tbl %>%
     y = "Revenue"
   )
   
-#challenge 1.2
+```
 
+It looks a bit crowded on the website, the plot on my local computer looks way better !
+
+# Challenge 1.2
+
+same as in 1.1, first part of the code, loading the libraries and reading the files, here is a glimpse of the resulting tables :
+
+```{r}
+# Data Science at TUHH ------------------------------------------------------
+# SALES ANALYSIS ----
+# Challenge 1.2
+
+# 1.0 Load libraries ----
+library(tidyverse)
+library(tibble)  
+library(readr)     
+library(dplyr)    
+library(magrittr) 
+library(tidyr)    
+library(stringr)  
+library(ggplot2)
+library(lubridate)
+library(readxl)
+# 2.0 Importing Files ----
+bikes_tbl      <- read_excel("/home/icareyus/R_datascience/ds_basics-Clap-Trap1/01_tidyverse_files/ds_data/01_bike_sales/01_raw_data/bikes.xlsx")
+
+orderlines_tbl <- read_excel("/home/icareyus/R_datascience/ds_basics-Clap-Trap1/01_tidyverse_files/ds_data/01_bike_sales/01_raw_data/orderlines.xlsx")
+
+bikeshops_tbl <- read_excel("/home/icareyus/R_datascience/ds_basics-Clap-Trap1/01_tidyverse_files/ds_data/01_bike_sales/01_raw_data/bikeshops.xlsx")
 # 3.0 Examining Data  ----
 glimpse(orderlines_tbl)
+```
+same as in 1.1, The second part is the data wrangling part, to get the data ready for plotting, then the part with the data visualization. Here is the final plot:
+
+```{r}
 # 4.0 Joining Data ----
 bike_orderlines_joined_tbl <- orderlines_tbl %>%
   left_join(bikes_tbl, by = c("product.id" = "bike.id")) %>%
   left_join(bikeshops_tbl, by = c("customer.id" = "bikeshop.id"))
-bike_orderlines_joined_tbl %>% glimpse()
 # 5.0 Wrangling Data ----
 bike_orderlines_wrangled_tbl <- bike_orderlines_joined_tbl %>%
   # 5.1 Separate category name
@@ -160,7 +200,7 @@ sales_by_year_state_tbl %>%
   ggplot(aes(x = year, y = sales, fill = state)) +
   
   # Geometries
-  geom_col() + # Run up to here to get a stacked bar plot
+  geom_col() + 
   
   # Facet
   facet_wrap(~ state) +
@@ -176,3 +216,5 @@ sales_by_year_state_tbl %>%
     fill = "Main category" # Changes the legend name
   )
 ```
+
+It looks a bit crowded on the website, the plot on my local computer looks way better !

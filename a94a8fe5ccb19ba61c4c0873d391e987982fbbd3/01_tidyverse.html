@@ -381,9 +381,12 @@ div.tocify {
 </div>
 
 
+<div id="challenge-1.1" class="section level1">
+<h1><span class="header-section-number">1</span> Challenge 1.1</h1>
+<p>First part of the code, loading the libraries and reading the files, here is a glimpse of the resulting tables :</p>
 <pre class="r"><code># Data Science at TUHH ------------------------------------------------------
 # SALES ANALYSIS ----
-#challenge 1.1
+# Challenge 1.1
 
 # 1.0 Load libraries ----
 library(tidyverse)
@@ -414,33 +417,13 @@ glimpse(orderlines_tbl)</code></pre>
 ## $ customer.id &lt;dbl&gt; 2, 2, 10, 10, 6, 6, 6, 6, 6, 22, 8, 8, 8, 8, 16, 16, 16, 1…
 ## $ product.id  &lt;dbl&gt; 2681, 2411, 2629, 2137, 2367, 1973, 2422, 2655, 2247, 2408…
 ## $ quantity    &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1…</code></pre>
+<p>The second part is the data wrangling part, to get the data ready for plotting, then the part with the data visualization. Here is the final plot:</p>
 <pre class="r"><code># 4.0 Joining Data ----
 bike_orderlines_joined_tbl &lt;- orderlines_tbl %&gt;%
   left_join(bikes_tbl, by = c(&quot;product.id&quot; = &quot;bike.id&quot;)) %&gt;%
   left_join(bikeshops_tbl, by = c(&quot;customer.id&quot; = &quot;bikeshop.id&quot;))
-bike_orderlines_joined_tbl %&gt;% glimpse()</code></pre>
-<pre><code>## Rows: 15,644
-## Columns: 19
-## $ ...1           &lt;chr&gt; &quot;1&quot;, &quot;2&quot;, &quot;3&quot;, &quot;4&quot;, &quot;5&quot;, &quot;6&quot;, &quot;7&quot;, &quot;8&quot;, &quot;9&quot;, &quot;10&quot;, &quot;11&quot;…
-## $ order.id       &lt;dbl&gt; 1, 1, 2, 2, 3, 3, 3, 3, 3, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7…
-## $ order.line     &lt;dbl&gt; 1, 2, 1, 2, 1, 2, 3, 4, 5, 1, 1, 2, 3, 4, 1, 2, 3, 4, 1…
-## $ order.date     &lt;dttm&gt; 2015-01-07, 2015-01-07, 2015-01-10, 2015-01-10, 2015-0…
-## $ customer.id    &lt;dbl&gt; 2, 2, 10, 10, 6, 6, 6, 6, 6, 22, 8, 8, 8, 8, 16, 16, 16…
-## $ product.id     &lt;dbl&gt; 2681, 2411, 2629, 2137, 2367, 1973, 2422, 2655, 2247, 2…
-## $ quantity       &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1…
-## $ model          &lt;chr&gt; &quot;Spectral CF 7 WMN&quot;, &quot;Ultimate CF SLX Disc 8.0 ETAP&quot;, &quot;…
-## $ model.year     &lt;dbl&gt; 2021, 2020, 2021, 2019, 2020, 2020, 2020, 2021, 2020, 2…
-## $ frame.material &lt;chr&gt; &quot;carbon&quot;, &quot;carbon&quot;, &quot;carbon&quot;, &quot;carbon&quot;, &quot;aluminium&quot;, &quot;c…
-## $ weight         &lt;dbl&gt; 13.80, 7.44, 14.06, 8.80, 11.50, 8.80, 8.20, 8.85, 14.4…
-## $ price          &lt;dbl&gt; 3119, 5359, 2729, 1749, 1219, 1359, 2529, 1559, 3899, 6…
-## $ category       &lt;chr&gt; &quot;Mountain - Trail - Spectral&quot;, &quot;Road - Race - Ultimate&quot;…
-## $ gender         &lt;chr&gt; &quot;female&quot;, &quot;unisex&quot;, &quot;unisex&quot;, &quot;unisex&quot;, &quot;unisex&quot;, &quot;unis…
-## $ url            &lt;chr&gt; &quot;https://www.canyon.com/en-de/mountain-bikes/trail-bike…
-## $ name           &lt;chr&gt; &quot;AlexandeRad&quot;, &quot;AlexandeRad&quot;, &quot;WITT-RAD&quot;, &quot;WITT-RAD&quot;, &quot;…
-## $ location       &lt;chr&gt; &quot;Hamburg, Hamburg&quot;, &quot;Hamburg, Hamburg&quot;, &quot;Bremen, Bremen…
-## $ lat            &lt;dbl&gt; 53.57532, 53.57532, 53.07379, 53.07379, 48.78234, 48.78…
-## $ lng            &lt;dbl&gt; 10.015340, 10.015340, 8.826754, 8.826754, 9.180819, 9.1…</code></pre>
-<pre class="r"><code># 5.0 Wrangling Data ----
+
+# 5.0 Wrangling Data ----
 bike_orderlines_wrangled_tbl &lt;- bike_orderlines_joined_tbl %&gt;%
   # 5.1 Separate category name
   separate(col    = category,
@@ -498,9 +481,33 @@ sales_by_state_tbl %&gt;%
     x = &quot;state&quot;, # Override defaults for x and y
     y = &quot;Revenue&quot;
   )</code></pre>
-<p><img src="01_tidyverse_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
-<pre class="r"><code>#challenge 1.2
+<p><img src="01_tidyverse_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>It looks a bit crowded on the website, the plot on my local computer looks way better !</p>
+</div>
+<div id="challenge-1.2" class="section level1">
+<h1><span class="header-section-number">2</span> Challenge 1.2</h1>
+<p>same as in 1.1, first part of the code, loading the libraries and reading the files, here is a glimpse of the resulting tables :</p>
+<pre class="r"><code># Data Science at TUHH ------------------------------------------------------
+# SALES ANALYSIS ----
+# Challenge 1.2
 
+# 1.0 Load libraries ----
+library(tidyverse)
+library(tibble)  
+library(readr)     
+library(dplyr)    
+library(magrittr) 
+library(tidyr)    
+library(stringr)  
+library(ggplot2)
+library(lubridate)
+library(readxl)
+# 2.0 Importing Files ----
+bikes_tbl      &lt;- read_excel(&quot;/home/icareyus/R_datascience/ds_basics-Clap-Trap1/01_tidyverse_files/ds_data/01_bike_sales/01_raw_data/bikes.xlsx&quot;)
+
+orderlines_tbl &lt;- read_excel(&quot;/home/icareyus/R_datascience/ds_basics-Clap-Trap1/01_tidyverse_files/ds_data/01_bike_sales/01_raw_data/orderlines.xlsx&quot;)
+
+bikeshops_tbl &lt;- read_excel(&quot;/home/icareyus/R_datascience/ds_basics-Clap-Trap1/01_tidyverse_files/ds_data/01_bike_sales/01_raw_data/bikeshops.xlsx&quot;)
 # 3.0 Examining Data  ----
 glimpse(orderlines_tbl)</code></pre>
 <pre><code>## Rows: 15,644
@@ -512,33 +519,12 @@ glimpse(orderlines_tbl)</code></pre>
 ## $ customer.id &lt;dbl&gt; 2, 2, 10, 10, 6, 6, 6, 6, 6, 22, 8, 8, 8, 8, 16, 16, 16, 1…
 ## $ product.id  &lt;dbl&gt; 2681, 2411, 2629, 2137, 2367, 1973, 2422, 2655, 2247, 2408…
 ## $ quantity    &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1…</code></pre>
+<p>same as in 1.1, The second part is the data wrangling part, to get the data ready for plotting, then the part with the data visualization. Here is the final plot:</p>
 <pre class="r"><code># 4.0 Joining Data ----
 bike_orderlines_joined_tbl &lt;- orderlines_tbl %&gt;%
   left_join(bikes_tbl, by = c(&quot;product.id&quot; = &quot;bike.id&quot;)) %&gt;%
   left_join(bikeshops_tbl, by = c(&quot;customer.id&quot; = &quot;bikeshop.id&quot;))
-bike_orderlines_joined_tbl %&gt;% glimpse()</code></pre>
-<pre><code>## Rows: 15,644
-## Columns: 19
-## $ ...1           &lt;chr&gt; &quot;1&quot;, &quot;2&quot;, &quot;3&quot;, &quot;4&quot;, &quot;5&quot;, &quot;6&quot;, &quot;7&quot;, &quot;8&quot;, &quot;9&quot;, &quot;10&quot;, &quot;11&quot;…
-## $ order.id       &lt;dbl&gt; 1, 1, 2, 2, 3, 3, 3, 3, 3, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7…
-## $ order.line     &lt;dbl&gt; 1, 2, 1, 2, 1, 2, 3, 4, 5, 1, 1, 2, 3, 4, 1, 2, 3, 4, 1…
-## $ order.date     &lt;dttm&gt; 2015-01-07, 2015-01-07, 2015-01-10, 2015-01-10, 2015-0…
-## $ customer.id    &lt;dbl&gt; 2, 2, 10, 10, 6, 6, 6, 6, 6, 22, 8, 8, 8, 8, 16, 16, 16…
-## $ product.id     &lt;dbl&gt; 2681, 2411, 2629, 2137, 2367, 1973, 2422, 2655, 2247, 2…
-## $ quantity       &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1…
-## $ model          &lt;chr&gt; &quot;Spectral CF 7 WMN&quot;, &quot;Ultimate CF SLX Disc 8.0 ETAP&quot;, &quot;…
-## $ model.year     &lt;dbl&gt; 2021, 2020, 2021, 2019, 2020, 2020, 2020, 2021, 2020, 2…
-## $ frame.material &lt;chr&gt; &quot;carbon&quot;, &quot;carbon&quot;, &quot;carbon&quot;, &quot;carbon&quot;, &quot;aluminium&quot;, &quot;c…
-## $ weight         &lt;dbl&gt; 13.80, 7.44, 14.06, 8.80, 11.50, 8.80, 8.20, 8.85, 14.4…
-## $ price          &lt;dbl&gt; 3119, 5359, 2729, 1749, 1219, 1359, 2529, 1559, 3899, 6…
-## $ category       &lt;chr&gt; &quot;Mountain - Trail - Spectral&quot;, &quot;Road - Race - Ultimate&quot;…
-## $ gender         &lt;chr&gt; &quot;female&quot;, &quot;unisex&quot;, &quot;unisex&quot;, &quot;unisex&quot;, &quot;unisex&quot;, &quot;unis…
-## $ url            &lt;chr&gt; &quot;https://www.canyon.com/en-de/mountain-bikes/trail-bike…
-## $ name           &lt;chr&gt; &quot;AlexandeRad&quot;, &quot;AlexandeRad&quot;, &quot;WITT-RAD&quot;, &quot;WITT-RAD&quot;, &quot;…
-## $ location       &lt;chr&gt; &quot;Hamburg, Hamburg&quot;, &quot;Hamburg, Hamburg&quot;, &quot;Bremen, Bremen…
-## $ lat            &lt;dbl&gt; 53.57532, 53.57532, 53.07379, 53.07379, 48.78234, 48.78…
-## $ lng            &lt;dbl&gt; 10.015340, 10.015340, 8.826754, 8.826754, 9.180819, 9.1…</code></pre>
-<pre class="r"><code># 5.0 Wrangling Data ----
+# 5.0 Wrangling Data ----
 bike_orderlines_wrangled_tbl &lt;- bike_orderlines_joined_tbl %&gt;%
   # 5.1 Separate category name
   separate(col    = category,
@@ -584,7 +570,7 @@ sales_by_year_state_tbl %&gt;%
   ggplot(aes(x = year, y = sales, fill = state)) +
   
   # Geometries
-  geom_col() + # Run up to here to get a stacked bar plot
+  geom_col() + 
   
   # Facet
   facet_wrap(~ state) +
@@ -599,7 +585,9 @@ sales_by_year_state_tbl %&gt;%
     subtitle = &quot;Hamburg has an upward trend&quot;,
     fill = &quot;Main category&quot; # Changes the legend name
   )</code></pre>
-<p><img src="01_tidyverse_files/figure-html/unnamed-chunk-1-2.png" width="672" /></p>
+<p><img src="01_tidyverse_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>It looks a bit crowded on the website, the plot on my local computer looks way better !</p>
+</div>
 
 
 

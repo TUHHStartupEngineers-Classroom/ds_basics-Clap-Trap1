@@ -65,4 +65,26 @@ library(dplyr)
 library(magrittr)
 library(ggplot2)
 
+covid_data_tbl <- read_csv("https://covid.ourworldindata.org/data/owid-covid-data.csv")
+
+world_map <- map_data("world") %>%
+  select(region, long, lat, group) %>%
+  rename(location = region)
+
+covid_world_tbl <- covid_data_tbl %>%
+  #mutate(mortalityrate=total_deaths_per_million/1000000) %>%
+  select(date, location, total_deaths_per_million) %>%
+  rename(region=location)%>%
+  right_join(world_map)
+  #%>%
+  #group_by(region)
+
+ covid_world_tbl%>% ggplot() +
+  geom_map(aes(map_id = region, x=long, y=lat, fill = mortalityrate,color= "red"  ), map = world,colour= "white",size = 0.10)+
+   scale_fill_continuous(low = "red",
+                        high = "black",
+                        na.value = "grey50",
+                        guide="colorbar") +
+  labs(title = "Confirmed COVID 19 deaths realtive to size of population",
+      subtitle = "around 3million confirmed COVID 19 deaths worldwide",fill = "Mortality rate", x="", y="")
 ```
