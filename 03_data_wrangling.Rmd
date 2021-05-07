@@ -1,6 +1,6 @@
 ---
 title: "03 Data Wrangling"
-date: "2021-04"
+date: "2021-05"
 output:
   html_document:
     toc: true
@@ -16,39 +16,144 @@ output:
 knitr::opts_chunk$set(message=FALSE,warning=FALSE, cache=TRUE)
 ```
 
-**IMPORTANT:** You can delete everything in here and start fresh. You might want to start by not deleting anything above this line until you know what that stuff is doing.
-
-This is an `.Rmd` file. It is plain text with special features. Any time you write just like this, it will be compiled to normal text in the website. If you put a \# in front of your text, it will create a top level-header.
-
-# My first post
-
-Last compiled: `r Sys.Date()`
-
-Notice that whatever you define as a top level header, automatically gets put into the table of contents bar on the left. 
-
-## Second level header
-
-You can add more headers by adding more hashtags. These won't be put into the table of contents
-
-### third level header
-
-Here's an even lower level header
-
-# My second post (note the order)
-
-Last compiled: `r Sys.Date()`
-
-I'm writing this tutorial going from the top down. And, this is how it will be printed. So, notice the second post is second in the list. If you want your most recent post to be at the top, then make a new post starting at the top. If you want the oldest first, do, then keep adding to the bottom
-
-# Adding R stuff
-
-So far this is just a blog where you can write in plain text and serve your writing to a webpage. One of the main purposes of this lab journal is to record your progress learning R. The reason I am asking you to use this process is because you can both make a website, and a lab journal, and learn R all in R-studio. This makes everything really convenient and in the same place. 
-
-So, let's say you are learning how to make a histogram in R. For example, maybe you want to sample 100 numbers from a normal distribution with mean = 0, and standard deviation = 1, and then you want to plot a histogram. You can do this right here by using an r code block, like this:
-
 ```{r}
-samples <- rnorm(100, mean=0, sd=1)
-hist(samples)
-```
+library(vroom)
+library(dplyr)
+library(tidyverse)
+library(vroom)
+library(data.table)
+library(tictoc)
 
-When you knit this R Markdown document, you will see that the histogram is printed to the page, along with the R code. This document can be set up to hide the R code in the webpage, just delete the comment (hashtag) from the cold folding option in the yaml header up top. For purposes of letting yourself see the code, and me see the code, best to keep it the way that it is. You'll learn that all of these things and more can be customized in each R code block.
+#patent
+col_types <- list(
+  id = col_character(),
+  type = col_character(),
+  number = col_character(),
+  country = col_character(),
+  date = col_date("%Y-%m-%d"),
+  abstract = col_character(),
+  title = col_character(),
+  kind = col_character(),
+  num_claims = col_double(),
+  filename = col_character(),
+  withdrawn = col_double()
+)
+
+patent_tbl <- vroom(
+  file       = "patent.tsv", 
+  delim      = "\t", 
+  col_types  = col_types,
+  na         = c("", "NA", "NULL")
+)
+#assignee
+col_types_assignee <- list(
+  id = col_character(),
+  type = col_character(),
+  name_first = col_character(),
+  name_last = col_character(),
+  organization = col_character()
+)
+
+assignee_tbl <- vroom(
+  file       = "assignee.tsv", 
+  delim      = "\t", 
+  col_types  = col_types,
+  na         = c("", "NA", "NULL")
+)
+
+col_types_patent_assignee <- list(
+  patent_id = col_character(),
+  assignee_id = col_character(),
+  location_id = col_character()
+)
+
+patent_assignee_tbl <- vroom(
+  file       = "patent_assignee.tsv", 
+  delim      = "\t", 
+  col_types  = col_types,
+  na         = c("", "NA", "NULL")
+)
+
+col_types_uspc <- list(
+  uuid = col_character(),
+  patent_id = col_character(),
+  mainclass_id = col_character(),
+  subclass_id = col_character(),
+  sequence = col_integer()
+)
+
+uspc_tbl <- vroom(
+  file       = "uspc.tsv", 
+  delim      = "\t", 
+  col_types  = col_types_uspc,
+  na         = c("", "NA", "NULL")
+) 
+
+setDT(patent_tbl)
+setDT(assignee_tbl)
+setDT(patent_assignee_tbl)
+setDT(uspc_tbl)
+
+# Which US company has the most patents?
+setnames(assignee_tbl, "id", "assignee_id")
+combined_data <- merge(x = patent_assignee_tbl, y = assignee_tbl, by = "assignee_id")
+us_patents <- combined_data %>%
+  filter(type == 2)%>%
+  filter(!is.na(patent_id) || !is.na(organization)) %>%
+  select(-type, -assignee_id)%>% 
+  group_by(organization) %>%
+  count(patent_id) %>%
+  select(-patent_id)%>%
+  summarise(total = sum(n))%>%
+  arrange(desc(total))   
+us_top_10 <- us_patents %>% slice(1:10)
+us_top_10
+
+##2
+
+  
+  tbl_2 <- patent_tbl %>%   
+    separate(col  = date,
+             into = c("year", "month", "day"),
+             sep  = "-", remove = TRUE) %>%
+    mutate(
+      month = as.numeric(month)
+    )%>%
+    filter(month == 08)%>%
+    select(-year, -day)
+  setnames(tbl_2, "id", "patent_id")
+  combined_data_2 <- merge(x = tbl_2, y = combined_data, by = "patent_id")
+  us_top_10_2014 <- combined_data_2%>%
+    filter(type == 2)%>%
+    filter(!is.na(patent_id) || !is.na(organization)) %>%
+    select(organization, patent_id) %>%
+    group_by(organization) %>%
+    count(patent_id) %>%   
+    summarise(total_patents = sum(n))%>%
+    arrange(desc(total_patents)) %>% slice(1:10)  
+  us_top_10_2014
+  us_top_10_2014_new <- combined_data_2%>%
+    filter(type == 2 & num_claims == 1)%>%
+    filter(!is.na(patent_id) || !is.na(organization)) %>%
+    select(organization, patent_id) %>%
+    group_by(organization) %>%
+    count(patent_id) %>%   
+    summarise(total_patents = sum(n))%>%
+    arrange(desc(total_patents)) %>% slice(1:10)
+  us_top_10_2014_new
+
+  ##3 
+  combined_data_3 <- merge(x = uspc_tbl, y = combined_data_2, by = "patent_id")
+  top10_worlwide_patents <- combined_data_3  %>%
+    filter(!is.na(patent_id) || !is.na(organization))%>%
+    group_by(organization) %>%
+    arrange(desc(mainclass_id)) %>%
+    # set mainclass order first, the result will be sorted automatically 
+    count(patent_id) %>%
+    select(-patent_id)%>%
+    summarise(total_patents_wordwide = sum(n))%>%
+    ungroup() %>%
+    arrange(desc(total_patents_wordwide)) %>% slice(1:10)  
+  top10_worlwide_patents 
+```
+  

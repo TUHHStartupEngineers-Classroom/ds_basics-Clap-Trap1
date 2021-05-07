@@ -33,11 +33,11 @@ library(ggplot2)
 library(lubridate)
 library(readxl)
 # 2.0 Importing Files ----
-bikes_tbl      <- read_excel("/home/icareyus/Documents/GitHub/ds_basics-Clap-Trap1/01_tidyverse_files/ds_data/01_bike_sales/01_raw_data/bikes.xlsx")
+bikes_tbl      <- read_excel("/home/icareyus/R_datascience/ds_basics-Clap-Trap1/01_tidyverse_files/ds_data/01_bike_sales/01_raw_data/bikes.xlsx")
 
-orderlines_tbl <- read_excel("/home/icareyus/Documents/GitHub/ds_basics-Clap-Trap1/01_tidyverse_files/ds_data/01_bike_sales/01_raw_data/orderlines.xlsx")
+orderlines_tbl <- read_excel("/home/icareyus/R_datascience/ds_basics-Clap-Trap1/01_tidyverse_files/ds_data/01_bike_sales/01_raw_data/orderlines.xlsx")
 
-bikeshops_tbl <- read_excel("/home/icareyus/Documents/GitHub/ds_basics-Clap-Trap1/01_tidyverse_files/ds_data/01_bike_sales/01_raw_data/bikeshops.xlsx")
+bikeshops_tbl <- read_excel("/home/icareyus/R_datascience/ds_basics-Clap-Trap1/01_tidyverse_files/ds_data/01_bike_sales/01_raw_data/bikeshops.xlsx")
 
 # 3.0 Examining Data  ----
 glimpse(orderlines_tbl)
