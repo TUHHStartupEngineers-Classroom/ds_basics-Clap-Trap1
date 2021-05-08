@@ -213,7 +213,7 @@ sales_by_year_state_tbl %>%
   labs(
     title = "Revenue by year and state",
     subtitle = "Hamburg has an upward trend",
-    fill = "Main category" # Changes the legend name
+    fill = "State" # Changes the legend name
   )
 ```
 
