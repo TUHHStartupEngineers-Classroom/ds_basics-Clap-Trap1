@@ -508,7 +508,7 @@ us_patents</code></pre>
 </div>
 <div id="what-is-the-most-innovative-tech-sector" class="section level2">
 <h2><span class="header-section-number">1.3</span> What is the most innovative tech sector ?</h2>
-<p>The table shows the top class</p>
+<p>Not sure that I understood the question correctly or that the results make sense, it is a print of the main class of the top 5 companies.</p>
 <pre class="r"><code>  merged_organization_data &lt;- merge(x = uspc_tbl, y = patent_data, by = &quot;patent_id&quot;)
     organization_data &lt;- merged_organization_data %&gt;%
     filter(!is.na(patent_id) || !is.na(organization))%&gt;%
@@ -519,10 +519,24 @@ us_patents</code></pre>
     summarise(total_patents_wordwide = sum(n))%&gt;%
     ungroup() %&gt;%
     arrange(desc(total_patents_wordwide)) %&gt;% slice(1:10) 
-      organization_data</code></pre>
+
+top_mainclasses_tbl &lt;- merge(x = organization_data, y = merged_organization_data, 
+                             by    = &quot;organization&quot;, 
+                             all.x = TRUE, 
+                             all.y = FALSE) %&gt;%
+  
+  filter(!is.na(organization)) %&gt;%
+  group_by(organization) %&gt;%    
+  count(mainclass_id)%&gt;%
+  select(-mainclass_id)%&gt;%
+  summarise(main_classes = sum(n)) %&gt;%
+  arrange(desc(main_classes))
+
+top_5_tbl &lt;- head(top_mainclasses_tbl,5)
+top_5_tbl</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["organization"],"name":[1],"type":["chr"],"align":["left"]},{"label":["total_patents_wordwide"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"International Business Machines Corporation","2":"19056"},{"1":"Samsung Electronics Co., Ltd.","2":"14523"},{"1":"Canon Kabushiki Kaisha","2":"9467"},{"1":"Sony Corporation","2":"8372"},{"1":"QUALCOMM Incorporated","2":"7322"},{"1":"Microsoft Corporation","2":"7195"},{"1":"Kabushiki Kaisha Toshiba","2":"6957"},{"1":"Google Inc.","2":"6082"},{"1":"LG Electronics Inc.","2":"5694"},{"1":"Panasonic Corporation","2":"5641"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["organization"],"name":[1],"type":["chr"],"align":["left"]},{"label":["main_classes"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"International Business Machines Corporation","2":"19056"},{"1":"Samsung Electronics Co., Ltd.","2":"14523"},{"1":"Canon Kabushiki Kaisha","2":"9467"},{"1":"Sony Corporation","2":"8372"},{"1":"QUALCOMM Incorporated","2":"7322"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 </div>

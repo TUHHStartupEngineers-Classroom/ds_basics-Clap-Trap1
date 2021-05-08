@@ -145,7 +145,7 @@ IBMC has the most patents in the US!
 IBMC had the most patents granted in August 2014.
 
 ## What is the most innovative tech sector ?
- The table shows the top class 
+Not sure that I understood the question correctly or that the results make sense, it is a print of the main class of the top 5 companies.
 ```{r}
   merged_organization_data <- merge(x = uspc_tbl, y = patent_data, by = "patent_id")
     organization_data <- merged_organization_data %>%
@@ -157,6 +157,20 @@ IBMC had the most patents granted in August 2014.
     summarise(total_patents_wordwide = sum(n))%>%
     ungroup() %>%
     arrange(desc(total_patents_wordwide)) %>% slice(1:10) 
-      organization_data
+
+top_mainclasses_tbl <- merge(x = organization_data, y = merged_organization_data, 
+                             by    = "organization", 
+                             all.x = TRUE, 
+                             all.y = FALSE) %>%
+  
+  filter(!is.na(organization)) %>%
+  group_by(organization) %>%    
+  count(mainclass_id)%>%
+  select(-mainclass_id)%>%
+  summarise(main_classes = sum(n)) %>%
+  arrange(desc(main_classes))
+
+top_5_tbl <- head(top_mainclasses_tbl,5)
+top_5_tbl
 ```
   
